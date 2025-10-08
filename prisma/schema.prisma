@@ -1,0 +1,317 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ConversationType {
+  direct
+  exchange
+}
+
+enum ExchangeStatus {
+  pending
+  accepted
+  refused
+  cancelled
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  out_for_delivery
+  completed
+  cancelled
+}
+
+enum NotificationType {
+  message
+  ban
+  report
+  exchange_request
+  exchange_update
+  order
+  order_update
+}
+
+model Student {
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  firstName  String
+  lastName   String
+  phone      String?
+  university String
+  year       Int
+  specialty  String?
+
+  // Auth & Profil
+  avatar String?
+
+  // Relations
+  products       Product[]
+  reports        Report[]
+  notifications  Notification[]
+  history        History[]
+  // Conversations & Messages
+  conversations  Conversation[] @relation("ConversationParticipants")
+  sentMessages   Message[]      @relation("MessageSender")
+  seenMessages   Message[]      @relation("MessageSeenBy")
+  // Exchanges & Orders
+  exchangesAsked Exchange[]     @relation("ExchangeRequester")
+  exchangesOwned Exchange[]     @relation("ExchangeOwner")
+  ordersBought   Order[]        @relation("OrderBuyer")
+  ordersSold     Order[]        @relation("OrderSeller")
+
+  // Système
+  role      String   @default("student")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("students")
+}
+
+model Product {
+  id              Int            @id @default(autoincrement())
+  name            String
+  description     String
+  category        String
+  subcategory     String?
+  price           Float
+  points          Int?
+  images          String[]
+  university      String
+  is_exchangeable Boolean
+  // Relations
+  ownerId         Int
+  owner           Student        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  reports         Report[]
+  history         History[]
+  // Conversations & Exchanges & Orders
+  conversations   Conversation[]
+  requestedIn     Exchange[]     @relation("ExchangeRequestedProduct")
+  offeredIn       Exchange[]     @relation("ExchangeOwnerProduct")
+  orders          Order[]
+
+  // Système
+  status    String   @default("active") // "active", "reserved", "sold", "removed"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Report {
+  id          Int     @id @default(autoincrement())
+  reason      String
+  description String?
+
+  // Relations
+  reporterId Int
+  reporter   Student @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Système
+  status    String   @default("pending") // "pending", "reviewed", "resolved"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reports")
+}
+
+model Notification {
+  id      Int              @id @default(autoincrement())
+  title   String
+  content String
+  type    NotificationType
+  link    String?
+  isRead  Boolean          @default(false)
+
+  // Relations (destinataire: étudiant OU admin)
+  studentId Int?
+  student   Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  adminId   Int?
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  // Système
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model History {
+  id     Int    @id @default(autoincrement())
+  action String // "viewed", "contacted", "favorited"
+
+  // Relations
+  userId    Int
+  user      Student @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Système
+  createdAt DateTime @default(now())
+
+  @@map("history")
+}
+
+model Admin {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String
+  surname  String
+  phone    String?
+
+  // Relations
+  blockedUsers  Int[] // Liste des IDs des utilisateurs bannis
+  actionsLog    AdminAction[]
+  notifications Notification[]
+
+  // Système
+  role      String   @default("admin") // "admin" | "super-admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model AdminAction {
+  id       Int     @id @default(autoincrement())
+  action   String // "ban_user", "delete_product", "unban_user", etc.
+  targetId Int // L'ID de l'utilisateur ou produit concerné
+  details  String? // Détails supplémentaires de l'action
+
+  // Relations
+  adminId Int
+  admin   Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  // Système
+  createdAt DateTime @default(now())
+
+  @@map("admin_actions")
+}
+
+// Conversations
+model Conversation {
+  id   Int              @id @default(autoincrement())
+  type ConversationType
+
+  // Optionnel: conversation liée à un produit
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Participants (M:N)
+  participants Student[] @relation("ConversationParticipants")
+
+  // Messages
+  messages  Message[]
+  exchanges Exchange[]
+
+  // Optimisation: dernier message
+  lastMessageId Int?     @unique
+  lastMessage   Message? @relation("ConversationLastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
+
+  // Système
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("conversations")
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  content     String
+  attachments String[]
+
+  // Relations
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId Int
+  sender   Student @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  // Users who have seen the message (M:N)
+  seenBy Student[] @relation("MessageSeenBy")
+
+  // Système
+  createdAt          DateTime      @default(now())
+  // Back relation for lastMessage
+  lastInConversation Conversation? @relation("ConversationLastMessage")
+
+  @@map("messages")
+}
+
+// Exchanges
+model Exchange {
+  id     Int            @id @default(autoincrement())
+  status ExchangeStatus @default(pending)
+
+  // Relations
+  requesterId Int
+  requester   Student @relation("ExchangeRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+
+  requestedProductId Int
+  requestedProduct   Product @relation("ExchangeRequestedProduct", fields: [requestedProductId], references: [id], onDelete: Cascade)
+
+  ownerId Int
+  owner   Student @relation("ExchangeOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  ownerProductId Int
+  ownerProduct   Product @relation("ExchangeOwnerProduct", fields: [ownerProductId], references: [id], onDelete: Cascade)
+
+  conversationId Int?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  // Système
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("exchanges")
+}
+
+// Orders
+model Order {
+  id              Int         @id @default(autoincrement())
+  status          OrderStatus @default(pending)
+  quantity        Int         @default(1)
+  totalPrice      Float
+  deliveryAddress String
+  // Relations
+  buyerId         Int
+  buyer           Student     @relation("OrderBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+
+  sellerId Int
+  seller   Student @relation("OrderSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Système
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model BannedUsers {
+  id        Int    @id @default(autoincrement())
+  email     String
+  firstName String
+  lastName  String
+  phone     String?
+
+  @@map("banned_users")
+}
