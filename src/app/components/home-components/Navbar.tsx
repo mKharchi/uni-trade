@@ -4,6 +4,8 @@ import React from 'react'
 import { motion } from "framer-motion"
 import { Heart, User, User2 } from "lucide-react"
 const Navbar = () => {
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  
     const navlinks = [
         {
             text: "Home", link: "/"
@@ -16,7 +18,7 @@ const Navbar = () => {
         },
     ]
     return (
-        <div className='w-full border-b border-gray-200 max-w-[80vw] mx-auto flex items-center py-5 px-6 justify-between'>
+        <div className='w-full border-b border-gray-200  mx-auto flex items-center py-5 px-6 justify-between'>
             <div className='w-full text-3xl flex items-center justify-start '>
                 <motion.h1
                     initial={{
