@@ -69,7 +69,7 @@ const Slider = () => {
             initial={{ x: 10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="h-full w-full rounded relative overflow-hidden group"
+            className="min-h-full w-full rounded relative overflow-hidden group"
         >   {/* Slides Container */}
             <div
                 className="flex min-h-full transition-transform duration-700 ease-out"
@@ -89,7 +89,7 @@ const Slider = () => {
                         </div>
 
                         {/* Content */}
-                        <div className="relative h-full flex flex-col justify-center items-start px-8 md:px-16 lg:px-24 text-white">
+                        <div className="relative h-full flex flex-col justify-center items-start p-8 md:px-16 lg:px-24 text-white">
                             <h3 className="text-sm md:text-base font-medium mb-2 opacity-90">
                                 {slide.subtitle}
                             </h3>

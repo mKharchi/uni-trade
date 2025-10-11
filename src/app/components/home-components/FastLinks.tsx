@@ -31,11 +31,11 @@ const FastLinks = () => {
             transition={{
                 duration: 0.8, delay: 0.3
             }}
-            className='w-1/3 md:border-r gap-3  px-2  flex flex-col items-center justify-center '>
+            className='w-full md:w-1/3 md:border-r gap-3  px-2  flex flex-col items-center justify-center '>
             {
                 fastLinks.map((el, index) => {
                     return <Link key={index} href={el.link}
-                        className={` w-full px-4 py-2 ${index === fastLinks.length - 1 ? "" : "border-b border-primary"} `}
+                        className={` w-full px-4 py-0.5 md:py-2 ${index === fastLinks.length - 1 ? "" : "border-b border-primary"} `}
                     >    {el.text}
                     </Link>
                 })
