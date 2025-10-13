@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Julius_Sans_One } from "next/font/google";
 import { ProductProvider } from "./ProductsContext";
+import { ToastContainer } from 'react-toastify';
 
 const juliusSans = Julius_Sans_One({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
       >
         <ProductProvider>
           {children}
+          <ToastContainer />
         </ProductProvider>
       </body>
     </html>

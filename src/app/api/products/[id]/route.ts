@@ -15,8 +15,16 @@ export async function GET(
       );
     }
 
-    const product = await prisma.product.findUnique({
+    const product = await prisma.product.findFirst({
       where: { id: productId },
+      select: {
+        owner: true,
+        id: true,
+        images: true,
+        name: true,
+        description: true,
+        price: true,
+      },
     });
     if (!product) {
       return NextResponse.json(
@@ -38,4 +46,3 @@ export async function GET(
     );
   }
 }
-
