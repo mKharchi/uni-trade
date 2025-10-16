@@ -20,10 +20,14 @@ export async function GET(
       select: {
         owner: true,
         id: true,
-        images: true,
         name: true,
         description: true,
         price: true,
+        images: true,
+        category: true,
+        is_exchangeable: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
     if (!product) {

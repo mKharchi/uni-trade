@@ -13,10 +13,10 @@ const Navbar = () => {
     React.useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            
+
             // Check if scrolled past threshold
             setIsScrolled(currentScrollY > 20);
-            
+
             // Show navbar when scrolling up, hide when scrolling down
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 // Scrolling down
@@ -25,19 +25,19 @@ const Navbar = () => {
                 // Scrolling up
                 setIsVisible(true);
             }
-            
+
             setLastScrollY(currentScrollY);
         };
-        
+
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
 
     const navlinks = [
         { text: "Home", link: "/" },
+        { text: "Products", link: "/products" },
         { text: "Contact", link: "/contact" },
         { text: "About", link: "/about" },
-        { text: "Products", link: "/products" },
     ]
 
     return (
@@ -45,13 +45,12 @@ const Navbar = () => {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className={`w-full sticky top-0 z-50 transition-all duration-300 ${
-                isScrolled 
-                    ? 'bg-background/90 backdrop-blur-md shadow-lg' 
+            className={`w-full sticky top-0 z-50 transition-all duration-300 ${isScrolled
+                    ? 'bg-background/90 backdrop-blur-md shadow-border shadow-lg'
                     : 'bg-background border-b border-gray-200'
-            }`}
+                }`}
         >
-            <div className='w-full mx-auto flex items-center py-5 md:px-6 justify-between'>
+            <div className='w-full mx-auto flex items-center py-5 px-2 md:px-6 justify-between'>
                 {/* Logo */}
                 <div className='w-full text-3xl flex items-center justify-start'>
                     <motion.h1
