@@ -5,6 +5,7 @@ import { ProductProvider } from "./ProductsContext";
 import { ToastContainer } from 'react-toastify';
 import Navbar from "./components/home-components/Navbar";
 import Footer from "./components/Footer";
+import AuthProvider from "./AuthContext";
 
 const juliusSans = Julius_Sans_One({
   subsets: ["latin"],
@@ -34,8 +35,10 @@ export default function RootLayout({
           <div className='px-4 py-2 max-w-[75vw] flex flex-col items-center justify-start gap-4 w-full'>
             <Navbar />
             <ProductProvider>
-              {children}
-              <ToastContainer />
+              <AuthProvider>
+                {children}
+                <ToastContainer />
+              </AuthProvider>
             </ProductProvider>
           </div>
           <Footer/>
