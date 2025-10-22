@@ -3,7 +3,7 @@ import "./globals.css";
 import { Julius_Sans_One } from "next/font/google";
 import { ProductProvider } from "./ProductsContext";
 import { ToastContainer } from 'react-toastify';
-import Navbar from "./components/home-components/Navbar";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthProvider from "./AuthContext";
 
@@ -32,16 +32,17 @@ export default function RootLayout({
       >
         <div
           className='w-full min-h-screen flex flex-col items-center justify-start'>
-          <div className='px-4 py-2 max-w-[75vw] flex flex-col items-center justify-start gap-4 w-full'>
-            <Navbar />
+          <div className='px-4 py-2 max-w-7xl flex flex-col items-center justify-start gap-4 w-full'>
             <ProductProvider>
               <AuthProvider>
+                <Navbar />
+
                 {children}
                 <ToastContainer />
               </AuthProvider>
             </ProductProvider>
           </div>
-          <Footer/>
+          <Footer />
         </div>
       </body>
     </html>

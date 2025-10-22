@@ -1,34 +1,31 @@
 "use client"
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
 import { Heart, User2, Menu, X } from "lucide-react"
+import { useAuth } from '../AuthContext'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isScrolled, setIsScrolled] = React.useState(false);
     const [isVisible, setIsVisible] = React.useState(true);
     const [lastScrollY, setLastScrollY] = React.useState(0);
+    const [hovered, setHovered] = React.useState(false);
 
-    React.useEffect(() => {
+    const { token, logout } = useAuth();
+    const isConnected = Boolean(token);
+
+    useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-
-            // Check if scrolled past threshold
             setIsScrolled(currentScrollY > 20);
-
-            // Show navbar when scrolling up, hide when scrolling down
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                // Scrolling down
                 setIsVisible(false);
             } else {
-                // Scrolling up
                 setIsVisible(true);
             }
-
             setLastScrollY(currentScrollY);
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
@@ -46,8 +43,8 @@ const Navbar = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
             className={`w-full sticky top-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'bg-background/90 backdrop-blur-md shadow-border shadow-lg'
-                    : 'bg-background border-b border-gray-200'
+                ? 'bg-background/90 backdrop-blur-md shadow-border shadow-lg'
+                : 'bg-background border-b border-gray-200'
                 }`}
         >
             <div className='w-full mx-auto flex items-center py-5 px-2 md:px-6 justify-between'>
@@ -64,13 +61,13 @@ const Navbar = () => {
                 </div>
 
                 {/* Desktop Navigation */}
-                <div className='w-full hidden md:flex justify-center gap-4 items-center'>
+                <div className='w-full hidden lg:flex justify-center gap-4 items-center'>
                     {navlinks.map((el, index) => (
                         <motion.p
+                            key={index}
                             initial={{ y: -10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                            key={index}
                             className='text-lg hover:underline underline-offset-8 transition-all duration-200'
                         >
                             <Link href={el.link}>{el.text}</Link>
@@ -83,24 +80,77 @@ const Navbar = () => {
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
-                    className='flex w-full items-center justify-end gap-2'
+                    className='flex w-full items-center justify-end gap-2 relative'
                 >
-                    <Link href="/">
-                        <User2 size={20} />
-                    </Link>
+                    {/* WRAPPER for icon + dropdown */}
+                    <div
+                        className="relative flex flex-col items-end"
+                        onPointerEnter={() => setHovered(true)}
+                        onPointerLeave={() => setHovered(false)}
+                    >
+                        <div className='flex items-center justify-center cursor-pointer'>
+                            <User2 size={20} />
+                        </div>
+
+                        <AnimatePresence>
+                            {hovered && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className='absolute mt-2 bg-gray-50 rounded shadow-lg top-full right-0 flex flex-col min-w-[160px]'
+                                >
+                                    {isConnected ? (
+                                        <>
+                                            <Link
+                                                href="/profile"
+                                                className='px-4 py-2 hover:bg-gray-100 text-right'
+                                            >
+                                                Go to profile
+                                            </Link>
+                                            <button
+                                                onClick={logout}
+                                                className='px-4 py-2 text-right hover:bg-gray-100'
+                                            >
+                                                Logout
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                href="/auth/"
+                                                className='px-4 py-2 hover:bg-gray-100 text-right'
+                                            >
+                                                Login
+                                            </Link>
+                                           
+                                            <Link
+                                                href="/admin-login"
+                                                className='px-4 py-2 hover:bg-gray-100 text-right'
+                                            >
+                                                Login as Admin
+                                            </Link>
+                                        </>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
                     <Link href="/">
                         <Heart size={20} />
                     </Link>
 
-                    {/* Mobile Menu Toggle */}
                     <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className='md:hidden  p-1'
+                        className='lg:hidden p-1'
                     >
                         {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </motion.button>
                 </motion.div>
+
             </div>
 
             {/* Mobile Menu */}
@@ -111,7 +161,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className='md:hidden border-t border-gray-200  overflow-hidden'
+                        className='lg:hidden border-t border-gray-200  overflow-hidden'
                     >
                         <div className='flex flex-col py-4 px-4 gap-1'>
                             {navlinks.map((el, index) => (

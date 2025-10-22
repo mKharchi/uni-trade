@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Navbar from "./components/home-components/Navbar";
+import Navbar from "./components/Navbar";
 import Hero from "./components/home-components/Hero";
 import LastArrivals from "./components/home-components/LastArrivals";
 import Categories from "./components/home-components/Categories";

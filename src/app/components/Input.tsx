@@ -2,26 +2,34 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Input = ({
-    name, label, value, onChange,
+  name, label, value, onChange, type
 }: {
-    name: string;
-    label: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+  label: string;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
 }) => {
-    return (
-        <StyledWrapper className='w-full'>
-            <div className="form-control w-full ">
-                <input name={name} type="text" value={value} onChange={onChange} required />
-                <label>
-                    <span style={{ transitionDelay: '0ms' }}>{label[0]}</span>
-                    {label.slice(1).split('').map((char, index) => (
-                        <span key={index} style={{ transitionDelay: `${(index + 1) * 50}ms` }}>{char}</span>
-                    ))}
-                </label>
-            </div>
-        </StyledWrapper>
-    );
+  return (
+    <StyledWrapper className='w-full'>
+      <div className="form-control w-full ">
+        <input
+          className=""
+          name={name}
+          type={type || "text"}
+          value={value}
+          onChange={onChange}
+          required
+          autoComplete="off"    
+          autoCorrect="off"
+          spellCheck={false}
+        />
+        <label>
+          <span style={{ transitionDelay: '0ms' }}>{label}</span>
+        </label>
+      </div>
+    </StyledWrapper>
+  );
 }
 
 const StyledWrapper = styled.div`

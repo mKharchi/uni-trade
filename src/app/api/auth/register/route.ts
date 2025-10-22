@@ -9,11 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body
     const body = await request.json();
-    const validatedData = registerSchema.parse(body);
-
+    
     // Check if user already exists
     const existingUser = await prisma.student.findUnique({
-      where: { email: validatedData.email },
+      where: { email: body.email },
     });
 
     if (existingUser) {
@@ -26,19 +25,19 @@ export async function POST(request: NextRequest) {
 
     // Hash password
     const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds);
-
+    const hashedPassword = await bcrypt.hash(body.password, saltRounds);
+    
     // Create new user
     const newUser = await prisma.student.create({
       data: {
-        email: validatedData.email,
+        email: body.email,
         password: hashedPassword,
-        firstName: validatedData.firstName,
-        lastName: validatedData.lastName,
-        phone: validatedData.phone,
-        university: validatedData.university,
-        year: validatedData.year,
-        specialty: validatedData.specialty,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        phone: body.phone,
+        university: body.university,
+        year: body.year,
+        specialty: body.specialty,
         role: "student",
       },
       select: {

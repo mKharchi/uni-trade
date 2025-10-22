@@ -21,11 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify password
-    const isPasswordValid = true;
-    // await bcrypt.compare(
-    //  body.password,
-    //  user.password
-    //);
+    const isPasswordValid = await bcrypt.compare(body.password, user.password);
 
     if (!isPasswordValid) {
       return NextResponse.json(

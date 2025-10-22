@@ -1,6 +1,6 @@
 "use client";
 import Footer from '@/app/components/Footer';
-import Navbar from '@/app/components/home-components/Navbar';
+import Navbar from '@/app/components/Navbar';
 import ProductItem from '@/app/components/ProductItem';
 import { useProducts } from '@/app/ProductsContext';
 import { motion } from 'framer-motion';

@@ -31,7 +31,7 @@ const FastLinks = () => {
             transition={{
                 duration: 0.8, delay: 0.3
             }}
-            className='w-full md:w-1/3 md:border-r gap-3  px-2  flex flex-col items-center justify-center '>
+            className='w-full sm:w-1/3 sm:border-r gap-3  px-2  flex flex-col items-center justify-center '>
             {
                 fastLinks.map((el, index) => {
                     return <Link key={index} href={el.link}
