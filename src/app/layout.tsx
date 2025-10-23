@@ -3,8 +3,8 @@ import "./globals.css";
 import { Julius_Sans_One } from "next/font/google";
 import { ProductProvider } from "./ProductsContext";
 import { ToastContainer } from 'react-toastify';
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+
+
 import AuthProvider from "./AuthContext";
 
 const juliusSans = Julius_Sans_One({
@@ -31,18 +31,14 @@ export default function RootLayout({
         className={`${juliusSans.variable} antialiased`}
       >
         <div
-          className='w-full min-h-screen flex flex-col items-center justify-start'>
-          <div className='px-4 py-2 max-w-7xl flex flex-col items-center justify-start gap-4 w-full'>
-            <ProductProvider>
-              <AuthProvider>
-                <Navbar />
+          className='w-full min-h-screen'>
+          <ProductProvider>
+            <AuthProvider>
 
-                {children}
-                <ToastContainer />
-              </AuthProvider>
-            </ProductProvider>
-          </div>
-          <Footer />
+              {children}
+              <ToastContainer />
+            </AuthProvider>
+          </ProductProvider>
         </div>
       </body>
     </html>

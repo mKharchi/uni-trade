@@ -1,10 +1,9 @@
 "use client";
 import Image from 'next/image';
 import React from 'react'
-import Input from '../components/Input';
-import { useAuth } from '../AuthContext';
-import Link from 'next/link';
-import { is } from 'zod/v4/locales';
+import Input from '@/app/components/Input';
+import { useAuth } from '@/app/AuthContext';
+
 import { redirect } from 'next/navigation';
 
 const page = () => {

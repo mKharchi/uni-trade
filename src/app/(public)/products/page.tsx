@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useProducts } from '../ProductsContext';
-import ProductItem from '../components/ProductItem';
+import ProductItem from '@/app/components/ProductItem';
 
 import { ChevronDown, X, Search, RotateCcw, Filter } from 'lucide-react'
+import { useProducts } from '@/app/ProductsContext';
 
 const FilterSidebar = ({
     searchTerm,
@@ -25,7 +25,7 @@ const FilterSidebar = ({
     });
 
     const toggleSection = (section: string) => {
-        setExpandedSections(prev => ({
+        setExpandedSections((prev: any) => ({
             ...prev,
             [section]: !prev[section]
         }));
