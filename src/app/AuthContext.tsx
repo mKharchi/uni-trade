@@ -19,6 +19,7 @@ const AuthContext = createContext<{
     ) => Promise<boolean>;
     token: string | null;
     logout: () => void;
+    loginAdmin: (email: string, password: string) => Promise<boolean>;
 } | null>(null);
 
 
@@ -110,9 +111,38 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem('authToken');
         toast.info("Logged out successfully.");
     }
+    const loginAdmin = async (email: string, password: string) => {
+        // Implement admin login logic here
+        try {
+            setLoading(true);
+            const data = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            const result = await data.json();
+
+            console.log(result);
+            if (result.success) {
+
+                toast.success("Admin login successful!");
+                setToken(result.token);
+                return true;
+            } else {
+                throw new Error(result.error || "Admin login failed");
+            }
+        } catch (error) {
+            toast.error(`Admin login failed. ${(error as Error).message}`);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ login, loading, setLoading, register, token, logout }}>
+        <AuthContext.Provider value={{ login, loading, setLoading, register, token, logout, loginAdmin }}>
             {children}
         </AuthContext.Provider>
     )

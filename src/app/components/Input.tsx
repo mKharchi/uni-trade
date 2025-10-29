@@ -20,8 +20,11 @@ const Input = ({
           value={value}
           onChange={onChange}
           required
-          autoComplete="off"    
+          autoComplete="off"
+          autoCapitalize="none"
+          autoFocus={false}
           autoCorrect="off"
+
           spellCheck={false}
         />
         <label>

@@ -7,8 +7,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             flex items-stretch justify-between p-3'
 
         >
-            <div className='bg-primary rounded text-background w-40 lg:w-80 flex flex-col items-center justify-between'>
-                <p>Admin Panel</p>
+            <div className='bg-primary rounded text-background w-40 lg:w-80 flex flex-col items-center justify-start
+            p-4 gap-6'>
                 <p>User Management</p>
                 <p>Settings</p>
             </div>
