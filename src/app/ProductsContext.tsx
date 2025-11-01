@@ -90,7 +90,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     }, []);
     const defaultImages = ["/test.png", "/test.png", "/test.png", "/test.png",];
     return (
-        <ProductsContext.Provider value={{ latestArrivals, setLatestArrivals, bestSeller, setBestSeller, products, setproducts, getProduct, getRelatedProducts, loading, defaultImages }}>
+        <ProductsContext.Provider value={{ latestArrivals, setLatestArrivals, bestSeller, setBestSeller, products, setproducts, getProduct, getRelatedProducts, loading, defaultImages}}>
             {children}
         </ProductsContext.Provider>
     );

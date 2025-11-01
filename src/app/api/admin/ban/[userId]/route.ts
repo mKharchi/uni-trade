@@ -8,7 +8,7 @@ export async function POST(
 ) {
   try {
     const userId = Number(context.params.userId);
-    const user = await prisma.student.findUnique({
+    const user = await prisma.student.findFirst({
       where: { id: userId },
       include: {
         reports: true,
@@ -28,7 +28,6 @@ export async function POST(
     if (!user?.reports || user.reports.length < 3) {
       throw new Error("User must have at least three reports.");
     }
-    // send the user an email
 
     // add the user auth information to the banned users db
     const { email, firstName, lastName, phone } = user;
@@ -70,7 +69,7 @@ export async function GET(
 ) {
   try {
     const id = Number(context.params.userId);
-    const user = await prisma.student.findUnique({
+    const user = await prisma.student.findFirst({
       where: { id },
       include: {
         reports: true,
