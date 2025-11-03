@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
-
+import { motion } from 'framer-motion'
 
 
 const Sidebar = (
@@ -14,7 +14,8 @@ const Sidebar = (
         isActive: (path: string) => string
     }
 ) => {
-    return <div className={`
+    return <motion.div
+        className={`
                 border border-primary rounded text-primary 
                 bg-gray-100
                 w-64 lg:w-80 
@@ -34,9 +35,16 @@ const Sidebar = (
             >
                 Profile
             </Link>
+            <Link
+                href="/settings/notifications"
+                onClick={closeSidebar}
+                className={`p-2 border rounded-md transition-colors text-center duration-200 cursor-pointer border-black/20 w-full ${isActive("/settings/notifications")}`}
+            >
+                Notifications
+            </Link>
         </div>
-        
-    </div>
+
+    </motion.div>
 
 }
 
@@ -80,11 +88,23 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             {/* Sidebar */}
-            <Sidebar isSidebarOpen={isSidebarOpen} isActive={isActive} closeSidebar={closeSidebar} />
-            {/* Main Content */}
-            <div className='w-full  lg:max-w-screen pt-16 lg:pt-0'>
+
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+
+
+            > <Sidebar isSidebarOpen={isSidebarOpen} isActive={isActive} closeSidebar={closeSidebar} />
+                {/* Main Content */}
+            </motion.div><motion.div
+
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1 }}
+                className='w-full  lg:max-w-screen pt-16 lg:pt-0'>
                 {children}
-            </div>
+            </motion.div>
         </div>
     )
 }

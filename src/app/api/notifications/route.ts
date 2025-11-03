@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         message: "error fetching notifications",
-        details: error.message,
+        error: error.message,
       },
       { status: 500 }
     );

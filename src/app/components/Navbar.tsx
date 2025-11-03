@@ -2,8 +2,9 @@
 import Link from 'next/link'
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, User2, Menu, X } from "lucide-react"
+import { Heart, User2, Menu, X, Bell } from "lucide-react"
 import { useAuth } from '../AuthContext'
+import { AiFillNotification, AiOutlineNotification } from 'react-icons/ai'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -87,9 +88,14 @@ const Navbar = () => {
                         className="relative flex flex-col items-end"
                         onPointerEnter={() => setHovered(true)}
                         onPointerLeave={() => setHovered(false)}
+
                     >
-                        <div className='flex items-center justify-center cursor-pointer'>
-                            <User2 size={20} />
+                        <div className='flex items-center gap-2 justify-center cursor-pointer'>
+
+
+                            <User2
+
+                                size={20} />
                         </div>
 
                         <AnimatePresence>
@@ -104,7 +110,7 @@ const Navbar = () => {
                                     {isConnected ? (
                                         <>
                                             <Link
-                                                href="/profile"
+                                                href="/settings/profile"
                                                 className='px-4 py-2 hover:bg-gray-100 text-right'
                                             >
                                                 Go to profile
@@ -124,7 +130,7 @@ const Navbar = () => {
                                             >
                                                 Login
                                             </Link>
-                                           
+
                                             <Link
                                                 href="/admin-login"
                                                 className='px-4 py-2 hover:bg-gray-100 text-right'
@@ -141,7 +147,9 @@ const Navbar = () => {
                     <Link href="/">
                         <Heart size={20} />
                     </Link>
-
+                    {isConnected && <Link href={"/settings/notifications"}>
+                        <Bell size={20} />
+                    </Link>}
                     <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsMenuOpen(!isMenuOpen)}

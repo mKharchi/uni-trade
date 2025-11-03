@@ -1,4 +1,5 @@
 "use client";
+import { getToken } from "next-auth/jwt";
 import { headers } from "next/headers";
 import React, { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -22,6 +23,7 @@ type AuthContextShape = {
     token: string | null;
     user: any | null;
     getUser: () => Promise<boolean>;
+    notifications: any[]
 };
 
 const AuthContext = createContext<AuthContextShape | null>(null);
@@ -64,6 +66,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             localStorage.setItem("authToken", token);
 
             getUser();
+            fetchNotifications()
         } else {
             localStorage.removeItem("authToken");
             setUser(null);
@@ -107,6 +110,26 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const [notifications, setNotifications] = useState([])
+    const fetchNotifications = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/notifications/", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const result = await res.json()
+            if ( result.success) {
+                console.log(result.notifications);
+                
+                setNotifications(result.notifications)
+            }else{
+            throw new Error(result.error || "");
+}        } catch (err: any) {
+            toast.error(` ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    }
     const register = async (
         email: string,
         password: string,
@@ -210,6 +233,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 token,
                 user,
                 getUser,
+                notifications
             }}
         >
             {children}

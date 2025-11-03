@@ -3,6 +3,7 @@ import { useProducts } from '@/app/ProductsContext';
 import React from 'react'
 import Title from './Title';
 import ProductItem from '../ProductItem';
+import Link from 'next/link';
 
 const Products = () => {
     const { products } = useProducts()
@@ -17,9 +18,9 @@ const Products = () => {
                     home_products.map((el, index) => <ProductItem key={index} {...el} />)
                 }
             </div>
-            <button className='px-6 w-fit cursor-pointer  mx-auto my-6 py-2 rounded border border-primary text-center text-primary bg-secondary/60'>
+            <Link href={"/products"} className='px-6 cursor-pointer w-fit mx-auto my-6 py-2 rounded border border-primary text-center text-primary bg-secondary/60'>
                 View All Products
-            </button>
+            </Link>
         </div>
     )
 }
