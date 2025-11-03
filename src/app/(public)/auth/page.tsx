@@ -123,9 +123,9 @@ const page = () => {
                                 }</button>
 
                             </div>
-                            <div className="flex items-center justify-end w-1/2">
+                           {is_login && <div className="flex items-center justify-end w-1/2">
                                 <a href="#" className="text-sm  text-right text-gray-500 hover:underline">Forgot Password?</a>
-                            </div>
+                            </div>}
                         </div>
                     </form>
                 </div>

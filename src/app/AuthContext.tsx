@@ -1,4 +1,5 @@
 "use client";
+import { headers } from "next/headers";
 import React, { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -61,7 +62,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (token) {
             localStorage.setItem("authToken", token);
-            // fetch user when token becomes available
+
             getUser();
         } else {
             localStorage.removeItem("authToken");
@@ -123,13 +124,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, firstName, lastName, phone, university, year, specialty }),
             });
-            const text = await res.text();
-            const result = safeParseJson(text) || {};
+            const result = await res.json()
             if (res.ok && result.success) {
+                setToken(result.token ?? null);
                 toast.success("Registration successful!");
+
                 return true;
             }
-            throw new Error(result.error || "Registration failed");
+            throw new Error(result.error || "");
         } catch (err: any) {
             toast.error(`Registration failed. ${err.message}`);
             return false;
@@ -173,59 +175,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
 
-            // 1) Try dedicated endpoint /api/auth/me
-            try {
-                const res1 = await requestWithAuth("/api/auth/me", { method: "GET" });
-                if (res1.ok && res1.body?.user) {
-                    setUser(res1.body.user);
-                    return true;
-                }
-            } catch {
-                // continue to next
-            }
-
-            // 2) Try /api/users (legacy)
-            try {
-                const res2 = await requestWithAuth("/api/users", { method: "GET" });
-                if (res2.ok && res2.body?.user) {
-                    setUser(res2.body.user);
-                    return true;
-                }
-            } catch {
-                // continue to next
-            }
-
-            // 3) Try admin users listing and match against token payload (if JWT)
-            try {
-                const res3 = await requestWithAuth("/api/admin/users", { method: "GET" });
-                if (res3.ok && res3.body?.users) {
-                    const students = Array.isArray(res3.body.users.students) ? res3.body.users.students : [];
-                    const admins = Array.isArray(res3.body.users.admins) ? res3.body.users.admins : [];
-                    const all = [...students, ...admins];
-
-                    const payload = decodeJwtPayload(token);
-                    const candidate =
-                        all.find((u: any) => {
-                            if (!u) return false;
-                            if (payload?.email && u.email && String(u.email).toLowerCase() === String(payload.email).toLowerCase()) return true;
-                            const uid = u.id ?? u._id ?? u.studentId ?? u.adminId;
-                            if (payload?.sub && uid && String(uid) === String(payload.sub)) return true;
-                            if (payload?.id && uid && String(uid) === String(payload.id)) return true;
-                            return false;
-                        }) ?? null;
-
-                    if (candidate) {
-                        setUser(candidate);
-                        return true;
+            const response = await fetch("/api/users/",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 }
-            } catch {
-                // ignore
+            )
+            const result = await response.json()
+            if (!result.success) {
+                throw new Error(result.error)
             }
+            setUser(result.user)
+            return true;
 
-            // If nothing found, clear user
-            setUser(null);
-            return false;
         } catch (err: any) {
             toast.error(err.message || "Failed to fetch user");
             setUser(null);

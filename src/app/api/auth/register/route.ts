@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         lastName: body.lastName,
         phone: body.phone,
         university: body.university,
-        year: body.year,
+        year: Number(body.year),
         specialty: body.specialty,
         role: "student",
       },
@@ -72,8 +72,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Registration error:", error);
-
+    
     // Handle validation errors
     if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json(
@@ -96,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     // Generic server error
     return NextResponse.json(
-      { success:false, error: "Internal server error" },
+      { success:false, error: (error as any).message },
       { status: 500 }
     );
   } finally {
