@@ -49,6 +49,13 @@ const Sidebar = (
             >
                 My products
             </Link>
+            <Link
+                href="/settings/history"
+                onClick={closeSidebar}
+                className={`p-2 border rounded-md transition-colors text-center duration-200 cursor-pointer border-black/20 w-full ${isActive("/settings/history")}`}
+            >
+                History
+            </Link>
         </div>
 
     </motion.div>

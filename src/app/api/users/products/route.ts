@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         description,
         category,
         subcategory,
-        price,
+        price:Number(price),
         is_exchangeable,
         points: is_exchangeable ? calculatePoints(price , category) : 0,
         ownerId: userId,
@@ -74,9 +74,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: "Error adding product",
-        details:  error.message ,
-      },
+        error:error.message},
       { status: 500 }
     );
   }
