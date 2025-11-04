@@ -72,7 +72,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             setLoading(false);
         }
     }// No dependencies
-
+    
     const getRelatedProducts = async (id: string) => {
         // Fetch related products by ID logic here
         // const response = await fetch(`/api/products/related/${id}`);

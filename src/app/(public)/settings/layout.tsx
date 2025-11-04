@@ -42,6 +42,13 @@ const Sidebar = (
             >
                 Notifications
             </Link>
+            <Link
+                href="/settings/products"
+                onClick={closeSidebar}
+                className={`p-2 border rounded-md transition-colors text-center duration-200 cursor-pointer border-black/20 w-full ${isActive("/settings/products")}`}
+            >
+                My products
+            </Link>
         </div>
 
     </motion.div>
@@ -97,7 +104,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 
             > <Sidebar isSidebarOpen={isSidebarOpen} isActive={isActive} closeSidebar={closeSidebar} />
                 {/* Main Content */}
-            </motion.div><motion.div
+            </motion.div>
+            <motion.div
 
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

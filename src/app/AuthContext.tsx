@@ -23,7 +23,9 @@ type AuthContextShape = {
     token: string | null;
     user: any | null;
     getUser: () => Promise<boolean>;
-    notifications: any[]
+    notifications: any[];
+    userProducts: any[];
+    fetchUserProducts: () => void
 };
 
 const AuthContext = createContext<AuthContextShape | null>(null);
@@ -66,7 +68,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             localStorage.setItem("authToken", token);
 
             getUser();
-            fetchNotifications()
+            fetchNotifications();
+            fetchUserProducts();
         } else {
             localStorage.removeItem("authToken");
             setUser(null);
@@ -74,17 +77,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
-    const requestWithAuth = async (url: string, opts: RequestInit = {}) => {
-        const headers = {
-            "Content-Type": "application/json",
-            ...(opts.headers || {}),
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        };
-        const res = await fetch(url, { ...opts, headers, credentials: "include" });
-        const text = await res.text();
-        const body = safeParseJson(text);
-        return { ok: res.ok, status: res.status, body };
-    };
+
 
     const login = async (email: string, password: string) => {
         try {
@@ -118,18 +111,42 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const result = await res.json()
-            if ( result.success) {
+            if (result.success) {
                 console.log(result.notifications);
-                
+
                 setNotifications(result.notifications)
-            }else{
-            throw new Error(result.error || "");
-}        } catch (err: any) {
+            } else {
+                throw new Error(result.error || "");
+            }
+        } catch (err: any) {
             toast.error(` ${err.message}`);
         } finally {
             setLoading(false);
         }
     }
+
+    const [userProducts, setUserProducts] = useState<any[]>([])
+
+
+    const fetchUserProducts = async () => {
+        try {
+            setLoading(true)
+            const response = await fetch("/api/users/products", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            const result = await response.json()
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+            setUserProducts(result.products)
+
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const register = async (
         email: string,
         password: string,
@@ -233,7 +250,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 token,
                 user,
                 getUser,
-                notifications
+                notifications,
+                userProducts,
+                fetchUserProducts
             }}
         >
             {children}
