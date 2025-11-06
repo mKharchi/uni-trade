@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Heart, User2, Menu, X, Bell } from "lucide-react"
 import { useAuth } from '../AuthContext'
 import { AiFillNotification, AiOutlineNotification } from 'react-icons/ai'
+import { usePathname } from 'next/navigation'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -15,7 +16,7 @@ const Navbar = () => {
 
     const { token, logout } = useAuth();
     const isConnected = Boolean(token);
-
+    const path = usePathname()
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -144,11 +145,11 @@ const Navbar = () => {
                         </AnimatePresence>
                     </div>
 
-                    <Link href="/">
-                        <Heart size={20} />
+                    <Link href="/favourites">
+                        <Heart fill={`${path === "/favourites" ? "#000" : "transparent"}`} size={20} />
                     </Link>
-                    {isConnected && <Link href={"/settings/notifications"}>
-                        <Bell size={20} />
+                    {isConnected && <Link href={"/notifications"}>
+                        <Bell fill={`${path === "/notifications" ? "#000" : "transparent"}`} size={20} />
                     </Link>}
                     <motion.button
                         whileTap={{ scale: 0.9 }}

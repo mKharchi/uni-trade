@@ -320,7 +320,7 @@ const Page: React.FC = () => {
     <div className='w-full rounded-xl p-1 bg-gray-50'>
       <div className='max-w-7xl mx-auto min-h-screen w-full rounded-xl bg-white p-4 '>
         <div className='flex items-center justify-between mb-6'>
-          <h1 className='text-3xl font-bold'>My Products</h1>
+          <h1 className='text-3xl '>My Products</h1>
           {shown_products.length > 0 && (
             <button
               onClick={() => setFormOpen(true)}

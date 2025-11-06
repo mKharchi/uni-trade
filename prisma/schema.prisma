@@ -75,9 +75,10 @@ model Student {
   ordersSold     Order[]        @relation("OrderSeller")
 
   // Système
-  role      String   @default("student")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role       String       @default("student")
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Favourites Favourites[]
 
   @@map("students")
 }
@@ -105,9 +106,10 @@ model Product {
   orders          Order[]
 
   // Système
-  status    String   @default("active") // "active", "reserved", "sold", "removed"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status     String       @default("active") // "active", "reserved", "sold", "removed"
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Favourites Favourites[]
 
   @@map("products")
 }
@@ -165,6 +167,17 @@ model History {
   createdAt DateTime @default(now())
 
   @@map("history")
+}
+
+model Favourites {
+  id     Int @id @default(autoincrement())
+  userId Int
+  user Student @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("favourites")
 }
 
 model Admin {
@@ -307,7 +320,7 @@ model Order {
 }
 
 model BannedUsers {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   email     String
   firstName String
   lastName  String

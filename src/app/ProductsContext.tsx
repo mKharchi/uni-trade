@@ -1,6 +1,9 @@
 "use client";
+import { getToken } from "next-auth/jwt";
 import { createContext, useState, useContext, useCallback, useEffect } from "react";
 import { toast } from 'react-toastify';
+import { da } from "zod/v4/locales";
+import { useAuth } from "./AuthContext";
 
 // Define context type for better TypeScript support
 type ProductsContextType = {
@@ -61,7 +64,6 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
             if (data.success) {
                 console.log(data.product);
-
                 return { product: data.product };
             } else {
                 toast.error(data.message || "Failed to fetch product");
@@ -72,25 +74,19 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             setLoading(false);
         }
     }// No dependencies
-    
-    const getRelatedProducts = async (id: string) => {
-        // Fetch related products by ID logic here
-        // const response = await fetch(`/api/products/related/${id}`);
-        // const data = await response.json();
-        // if (data.success) {
-        //     return products.slice(1, 5);
-        // } else {
-        //     toast.error(data.message || "Failed to fetch related products");
-        // }
+   
 
-        return products.slice(0, 5);
+    const getRelatedProducts = async (id: string) => {
+
+        return products.slice(0, 5)
+
     }
     useEffect(() => {
         fetchProducts();
     }, []);
     const defaultImages = ["/test.png", "/test.png", "/test.png", "/test.png",];
     return (
-        <ProductsContext.Provider value={{ latestArrivals, setLatestArrivals, bestSeller, setBestSeller, products, setproducts, getProduct, getRelatedProducts, loading, defaultImages}}>
+        <ProductsContext.Provider value={{ latestArrivals, setLatestArrivals, bestSeller, setBestSeller, products, setproducts, getProduct, getRelatedProducts, loading, defaultImages }}>
             {children}
         </ProductsContext.Provider>
     );

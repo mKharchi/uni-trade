@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from '@/app/AuthContext';
 import Footer from '@/app/components/Footer';
 import Navbar from '@/app/components/Navbar';
 import ProductItem from '@/app/components/ProductItem';
@@ -20,6 +21,7 @@ const page = (props: Props) => {
     const params = React.use(props.params);
     const { id } = params;
     const { getProduct, getRelatedProducts, loading, defaultImages } = useProducts();
+    const { addToHistory, fetchHistory } = useAuth()
     const [product, setProduct] = React.useState<any>(null);
     const [relatedProducts, setRelatedProducts] = React.useState<any[]>([]);
     const [image, setImage] = useState("");
@@ -27,9 +29,19 @@ const page = (props: Props) => {
     useEffect(() => {
         const fetchProduct = async () => {
             const product_temp = await getProduct(id);
+
             if (product_temp) {
+                console.log(product_temp);
+
                 setProduct(product_temp.product);
                 setImage(product_temp.product?.image?.[0] || defaultImages[0]);
+
+                // FIX: Use product_temp.product.id instead of product_temp.id
+                if (product_temp.product?.id) {
+                    addToHistory(product_temp.product.id, "viewed");
+                    fetchHistory();
+                }
+
                 const related = await getRelatedProducts(id);
                 setRelatedProducts(related);
             }

@@ -41,7 +41,7 @@ const FilterSidebar = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className={`mx-auto ${isDrawer ? "w-80 h-full" : "w-80"} bg-white rounded-xl shadow-lg border border-gray-100 p-6`}
+            className={`mx-auto ${isDrawer ? "w-75 h-full" : "w-75"} bg-white rounded-xl shadow-lg border border-gray-100 p-6`}
         >
             {/* Drawer close button */}
             {isDrawer && (
